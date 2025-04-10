@@ -221,8 +221,9 @@ const Dashboard: React.FC = () => {
         <h2 className="text-3xl text-black font-bold">Dashboard</h2>
         <button
           onClick={handleLogout}
-          className="hover:underline transition duration-300"
-        >
+          style={{ color: 'black' }}
+  className="py-3 bg-black font-semibold rounded-lg hover:bg-gray-800 transition"
+>
           Logout
         </button>
       </div>

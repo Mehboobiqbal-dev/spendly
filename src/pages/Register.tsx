@@ -101,18 +101,22 @@ const Register: React.FC = () => {
         <div className="mt-6">
           <p className="text-center text-sm text-black">Or sign up with:</p>
           <div className="flex justify-center gap-4 mt-2">
-          <button
-  type="submit"
-  style={{ color: 'black' }}
-  className=" py-3 bg-black font-semibold rounded-lg hover:bg-gray-800 transition"
+            <button
+              onClick={async () => {
+                await signInWithGoogle();
+              }}
+              style={{ color: 'black' }}
+  className="w-full py-3 bg-black font-semibold rounded-lg hover:bg-gray-800 transition"
 >
               Google
             </button>
 
             <button
-  type="submit"
-  style={{ color: 'black' }}
-  className=" py-3 bg-black font-semibold rounded-lg hover:bg-gray-800 transition"
+              onClick={async () => {
+                await signInWithGithub();
+              }}
+              style={{ color: 'black' }}
+  className="w-full py-3 bg-black font-semibold rounded-lg hover:bg-gray-800 transition"
 >
               GitHub
             </button>
