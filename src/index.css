@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -23,6 +27,11 @@ a:hover {
 }
 
 body {
+   background-image: url('../assets/background.jpg');
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   margin: 0;
   display: flex;
   place-items: center;
