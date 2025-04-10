@@ -90,7 +90,7 @@ const Register: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition"
+            className="w-full py-3 bg-black text-black font-semibold rounded-lg hover:bg-gray-800 transition"
           >
             Register
           </button>
@@ -113,10 +113,9 @@ const Register: React.FC = () => {
             <button
               onClick={async () => {
                 await signInWithGithub();
-                // Optionally, you can also explicitly navigate:
-                // navigate('/dashboard');
+               
               }}
-              className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
+              className="px-4 py-2 bg-black text-black rounded hover:bg-gray-800 transition"
             >
               GitHub
             </button>

@@ -286,7 +286,7 @@ const Dashboard: React.FC = () => {
           </div>
           <button
             type="submit"
-            className="bg-black text-white p-2 rounded hover:bg-gray-800 transition duration-300"
+            className="bg-black text-black p-2 rounded hover:bg-gray-800 transition duration-300"
           >
             {editingExpense ? 'Update Expense' : 'Add Expense'}
           </button>
