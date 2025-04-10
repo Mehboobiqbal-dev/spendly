@@ -289,7 +289,7 @@ const Dashboard: React.FC = () => {
             type="submit"
             className="bg-black text-white p-2 rounded hover:bg-gray-800 transition duration-300" // Fixed text color to white for contrast
           >
-            {editingExpense ? 'Update Expense' : 'Add Expense'} // Fixed from 'Upblack Expense'
+            {editingExpense ? 'Update Expense' : 'Add Expense'} 
           </button>
         </form>
       </div>
