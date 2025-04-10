@@ -99,26 +99,24 @@ const Register: React.FC = () => {
         <div className="mt-6">
           <p className="text-center text-sm text-black">Or sign up with:</p>
           <div className="flex justify-center gap-4 mt-2">
-            <button
-              // Option 1: Rely on the observer to navigate after successful social sign‑in
-              onClick={async () => {
-                await signInWithGoogle();
-                // Optionally, you can also explicitly navigate:
-                // navigate('/dashboard');
-              }}
-              className="px-4 py-2 bg-red-500 text-red rounded hover:bg-red-600 transition"
-            >
-              Google
-            </button>
-            <button
-              onClick={async () => {
-                await signInWithGithub();
-               
-              }}
-              className="px-4 py-2 bg-black text-red rounded hover:bg-gray-800 transition"
-            >
-              GitHub
-            </button>
+          <button
+  onClick={async () => {
+    await signInWithGoogle();
+  }}
+  className="px-4 py-2 bg-red-500 text-black rounded hover:bg-red-600 transition"
+>
+  Google
+</button>
+
+<button
+  onClick={async () => {
+    await signInWithGithub();
+  }}
+  className="px-4 py-2 bg-red-500 text-black rounded hover:bg-red-600 transition"
+>
+  GitHub
+</button>
+
           </div>
         </div>
 
