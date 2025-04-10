@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import './Header.css';
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -30,14 +31,7 @@ const Header: React.FC = () => {
                 Login
               </Link>
             )}
-            {!isRegisterPage && (
-              <Link
-                to="/register"
-                className="px-5 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition-all"
-              >
-                Register
-              </Link>
-            )}
+            
           </div>
         </nav>
       </div>

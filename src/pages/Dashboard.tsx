@@ -10,11 +10,30 @@ import { signOut } from 'firebase/auth';
 import { db, auth } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { useExpenses, Expense } from '../hooks/useExpenses';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  BarElement,
+  LineElement,
+  PointElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Pie, Doughnut, Bar, Line } from 'react-chartjs-2';
 import { Timestamp } from 'firebase/firestore';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(
+  ArcElement,
+  BarElement,
+  LineElement,
+  PointElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend
+);
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -28,25 +47,28 @@ const Dashboard: React.FC = () => {
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [notification, setNotification] = useState('');
 
-  // Filter and sort states
+  // Filter & sort states
   const [filterCategory, setFilterCategory] = useState('');
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'date_desc' | 'date_asc' | 'amount_desc' | 'amount_asc'>('date_desc');
 
-  // Memoized filtered expenses
+  // Chart type state
+  const [chartType, setChartType] = useState<'pie' | 'doughnut' | 'bar' | 'line'>('pie');
+
+  // Filtered & sorted expenses
   const filteredExpenses = useMemo(() => {
     return expenses
       .filter((expense) => {
-        const expenseDate = expense.date;
-        const matchesCategory = filterCategory ? expense.category === filterCategory : true;
-        const matchesStartDate = filterStartDate ? expenseDate >= new Date(filterStartDate) : true;
-        const matchesEndDate = filterEndDate ? expenseDate <= new Date(filterEndDate) : true;
-        const matchesSearch = searchQuery
+        const d = expense.date;
+        const okCat = filterCategory ? expense.category === filterCategory : true;
+        const okStart = filterStartDate ? d >= new Date(filterStartDate) : true;
+        const okEnd = filterEndDate ? d <= new Date(filterEndDate) : true;
+        const okSearch = searchQuery
           ? expense.note?.toLowerCase().includes(searchQuery.toLowerCase())
           : true;
-        return matchesCategory && matchesStartDate && matchesEndDate && matchesSearch;
+        return okCat && okStart && okEnd && okSearch;
       })
       .sort((a, b) => {
         if (sortBy === 'date_desc') return b.date.getTime() - a.date.getTime();
@@ -57,85 +79,101 @@ const Dashboard: React.FC = () => {
       });
   }, [expenses, filterCategory, filterStartDate, filterEndDate, searchQuery, sortBy]);
 
-  // Debug state updates
+  // Debug
   useEffect(() => {
-    console.log('User:', user);
-    console.log('Expenses:', expenses);
-    console.log('Filtered Expenses:', filteredExpenses);
+    console.log({ user, expenses, filteredExpenses });
   }, [user, expenses, filteredExpenses]);
 
-  // Category totals for Pie Chart
-  const getCategoryTotals = (exps: Expense[]) => {
-    const totals: { [key: string]: number } = {};
-    exps.forEach((expense) => {
-      totals[expense.category] = (totals[expense.category] || 0) + expense.amount;
+  // Category totals for charts
+  const categoryTotals = useMemo(() => {
+    const t: Record<string, number> = {};
+    expenses.forEach((e) => {
+      t[e.category] = (t[e.category] || 0) + e.amount;
     });
-    return totals;
-  };
+    return t;
+  }, [expenses]);
 
-  const categoryTotals = getCategoryTotals(expenses);
   const chartData = {
     labels: Object.keys(categoryTotals),
     datasets: [
       {
+        label: 'Amount',
         data: Object.values(categoryTotals),
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#8A2BE2', '#00FA9A'],
+        backgroundColor: [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#4BC0C0',
+          '#9966FF',
+          '#8A2BE2',
+          '#00FA9A',
+        ],
+        borderWidth: 1,
       },
     ],
   };
 
-  // Summary statistics
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom' as const },
+      tooltip: { enabled: true },
+    },
+  };
+
+  const renderChart = () => {
+    if (expenses.length === 0) {
+      return <p className="text-gray-500">No data to display.</p>;
+    }
+    switch (chartType) {
+      case 'pie':
+        return <Pie data={chartData} options={chartOptions} />;
+      case 'doughnut':
+        return <Doughnut data={chartData} options={chartOptions} />;
+      case 'bar':
+        return <Bar data={chartData} options={chartOptions} />;
+      case 'line':
+        return <Line data={chartData} options={chartOptions} />;
+      default:
+        return null;
+    }
+  };
+
+  // Summary stats
   const totalExpenses = expenses.length;
-  const totalAmount = expenses.reduce((acc, expense) => acc + expense.amount, 0);
+  const totalAmount = expenses.reduce((sum, e) => sum + e.amount, 0);
   const highestExpense =
     expenses.length > 0
-      ? expenses.reduce((max, expense) => (expense.amount > max ? expense.amount : max), expenses[0].amount)
+      ? Math.max(...expenses.map((e) => e.amount))
       : 0;
 
-  // Add or update expense
-  const handleAddOrUpdateExpense = async (e: React.FormEvent) => {
+  // CRUD handlers
+  const handleAddOrUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) {
-      setNotification('User not authenticated.');
-      return;
-    }
+    if (!user) return setNotification('Not authenticated.');
+    if (!amount || !category || !date) return setNotification('Fill all required fields.');
 
-    if (!amount || !category || !date) {
-      setNotification('Please fill in all required fields.');
-      return;
-    }
+    const amt = parseFloat(amount);
+    if (isNaN(amt)) return setNotification('Invalid amount.');
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return setNotification('Invalid date.');
 
-    const parsedAmount = parseFloat(amount);
-    if (isNaN(parsedAmount)) {
-      setNotification('Invalid amount.');
-      return;
-    }
-
-    const expenseDate = new Date(date);
-    if (isNaN(expenseDate.getTime())) {
-      setNotification('Invalid date.');
-      return;
-    }
-
-    const expenseData = {
+    const data = {
       userId: user.uid,
-      amount: parsedAmount,
+      amount: amt,
       category,
-      date: Timestamp.fromDate(expenseDate),
+      date: Timestamp.fromDate(d),
       note: note.trim(),
     };
 
     try {
       if (editingExpense) {
-        const expenseRef = doc(db, 'expenses', editingExpense.id);
-        await updateDoc(expenseRef, expenseData);
-        console.log('Updated expense:', editingExpense.id, expenseData);
-        setNotification('Expense updated successfully!');
+        await updateDoc(doc(db, 'expenses', editingExpense.id), data);
+        setNotification('Expense updated!');
         setEditingExpense(null);
       } else {
-        const docRef = await addDoc(collection(db, 'expenses'), expenseData);
-        console.log('Added expense with ID:', docRef.id, 'for user:', user.uid, expenseData);
-        setNotification('Expense added successfully!');
+        await addDoc(collection(db, 'expenses'), data);
+        setNotification('Expense added!');
       }
       setAmount('');
       setCategory('');
@@ -143,78 +181,79 @@ const Dashboard: React.FC = () => {
       setNote('');
       setTimeout(() => setNotification(''), 3000);
     } catch (err) {
-      console.error('Error processing expense:', err);
+      console.error(err);
       setNotification('Error processing expense.');
     }
   };
 
-  // Delete expense
-  const handleDeleteExpense = async (id: string) => {
+  const handleDelete = async (id: string) => {
     try {
       await deleteDoc(doc(db, 'expenses', id));
-      console.log('Deleted expense:', id);
-      setNotification('Expense deleted successfully!');
+      setNotification('Expense deleted!');
       setTimeout(() => setNotification(''), 3000);
     } catch (err) {
-      console.error('Error deleting expense:', err);
+      console.error(err);
       setNotification('Error deleting expense.');
     }
   };
 
-  // Edit expense
-  const handleEditExpense = (expense: Expense) => {
-    setEditingExpense(expense);
-    setAmount(expense.amount.toString());
-    setCategory(expense.category);
-    setDate(expense.date.toISOString().split('T')[0]);
-    setNote(expense.note || '');
+  const handleEdit = (exp: Expense) => {
+    setEditingExpense(exp);
+    setAmount(exp.amount.toString());
+    setCategory(exp.category);
+    setDate(exp.date.toISOString().split('T')[0]);
+    setNote(exp.note || '');
   };
 
-  // Logout
   const handleLogout = async () => {
     try {
       await signOut(auth);
     } catch (err) {
-      console.error('Error logging out:', err);
+      console.error(err);
     }
   };
 
-  // Render logic with error handling
-  if (loading) {
-    return <div className="text-center p-4">Loading...</div>;
-  }
-
-  if (error) {
+  if (loading) return <div className="text-center p-4">Loading...</div>;
+  if (error)
     return (
       <div className="text-center p-4 text-red-500">
         Error: {error} <br />
-        Please check the console for more details or ensure Firestore setup is correct.
+        Check console or Firestore setup.
       </div>
     );
-  }
 
   return (
     <div className="container mx-auto p-4">
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-blue-600">Dashboard</h2>
-        <button onClick={handleLogout} className="text-blue-500 hover:underline transition duration-300">
+        <button
+          onClick={handleLogout}
+          className="text-blue-500 hover:underline transition duration-300"
+        >
           Logout
         </button>
       </div>
 
+      {/* Notification */}
       {notification && (
         <div className="mb-4 p-2 bg-green-100 text-green-800 border border-green-300 rounded">
           {notification}
         </div>
       )}
 
+      {/* Add/Edit Form */}
       <div className="bg-white shadow rounded p-6 mb-8">
-        <h3 className="text-xl font-semibold mb-4">{editingExpense ? 'Edit Expense' : 'Add Expense'}</h3>
-        <form onSubmit={handleAddOrUpdateExpense} className="flex flex-col space-y-4">
+        <h3 className="text-xl font-semibold mb-4">
+          {editingExpense ? 'Edit Expense' : 'Add Expense'}
+        </h3>
+        <form onSubmit={handleAddOrUpdate} className="flex flex-col space-y-4">
           <div className="flex flex-col md:flex-row md:space-x-4">
             <input
               type="number"
               step="0.01"
+              inputMode="decimal"
+              pattern="\d+(\.\d{1,2})?"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="Amount*"
@@ -257,6 +296,7 @@ const Dashboard: React.FC = () => {
         </form>
       </div>
 
+      {/* Filters & Sorting */}
       <div className="bg-white shadow rounded p-6 mb-8">
         <h3 className="text-xl font-semibold mb-4">Filters & Sorting</h3>
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -277,14 +317,12 @@ const Dashboard: React.FC = () => {
             value={filterStartDate}
             onChange={(e) => setFilterStartDate(e.target.value)}
             className="p-2 border rounded"
-            placeholder="Start Date"
           />
           <input
             type="date"
             value={filterEndDate}
             onChange={(e) => setFilterEndDate(e.target.value)}
             className="p-2 border rounded"
-            placeholder="End Date"
           />
           <input
             type="text"
@@ -317,10 +355,15 @@ const Dashboard: React.FC = () => {
         </button>
       </div>
 
+      {/* Expenses List */}
       <div className="bg-white shadow rounded p-6 mb-8">
-        <h3 className="text-xl font-semibold mb-4">Expenses ({filteredExpenses.length})</h3>
+        <h3 className="text-xl font-semibold mb-4">
+          Expenses ({filteredExpenses.length})
+        </h3>
         {filteredExpenses.length === 0 ? (
-          <p className="text-gray-500">No expenses found. Try resetting filters or adding new expenses.</p>
+          <p className="text-gray-500">
+            No expenses found. Try resetting filters or adding new expenses.
+          </p>
         ) : (
           <ul className="space-y-4">
             {filteredExpenses.map((expense) => (
@@ -333,18 +376,19 @@ const Dashboard: React.FC = () => {
                     {expense.date.toLocaleDateString()} - {expense.category}
                   </p>
                   <p className="text-gray-600">
-                    ${expense.amount.toFixed(2)} {expense.note && `- ${expense.note}`}
+                    ${expense.amount.toFixed(2)}{' '}
+                    {expense.note && `- ${expense.note}`}
                   </p>
                 </div>
                 <div className="mt-2 md:mt-0 flex space-x-4">
                   <button
-                    onClick={() => handleEditExpense(expense)}
+                    onClick={() => handleEdit(expense)}
                     className="text-blue-500 hover:underline"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDeleteExpense(expense.id)}
+                    onClick={() => handleDelete(expense.id)}
                     className="text-red-500 hover:underline"
                   >
                     Delete
@@ -356,11 +400,16 @@ const Dashboard: React.FC = () => {
         )}
       </div>
 
+      {/* Summary Statistics */}
       <div className="bg-white shadow rounded p-6 mb-8">
-        <h3 className="text-xl font-semibold mb-4">Summary Statistics</h3>
+        <h3 className="text-xl font-semibold mb-4">
+          Summary Statistics
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 border rounded text-center">
-            <p className="text-2xl font-bold">${totalAmount.toFixed(2)}</p>
+            <p className="text-2xl font-bold">
+              ${totalAmount.toFixed(2)}
+            </p>
             <p className="text-gray-600">Total Amount</p>
           </div>
           <div className="p-4 border rounded text-center">
@@ -368,21 +417,43 @@ const Dashboard: React.FC = () => {
             <p className="text-gray-600">Number of Expenses</p>
           </div>
           <div className="p-4 border rounded text-center">
-            <p className="text-2xl font-bold">${highestExpense.toFixed(2)}</p>
+            <p className="text-2xl font-bold">
+              ${highestExpense.toFixed(2)}
+            </p>
             <p className="text-gray-600">Highest Expense</p>
           </div>
         </div>
       </div>
 
+      {/* Category Breakdown */}
       <div className="bg-white shadow rounded p-6">
-        <h3 className="text-xl font-semibold mb-4">Category Breakdown</h3>
-        {expenses.length === 0 ? (
-          <p className="text-gray-500">No data to display.</p>
-        ) : (
-          <div className="w-full md:w-1/2 mx-auto">
-            <Pie data={chartData} />
-          </div>
-        )}
+        <h3 className="text-xl font-semibold mb-4">
+          Category Breakdown
+        </h3>
+
+        {/* Chart Type Selector */}
+        <div className="mb-4 flex items-center space-x-2">
+          <label htmlFor="chartType" className="font-medium">
+            Chart Type:
+          </label>
+          <select
+            id="chartType"
+            value={chartType}
+            onChange={(e) =>
+              setChartType(e.target.value as any)
+            }
+            className="p-2 border rounded"
+          >
+            <option value="pie">Pie</option>
+            <option value="doughnut">Doughnut</option>
+            <option value="bar">Bar</option>
+            <option value="line">Line</option>
+          </select>
+        </div>
+
+        <div className="w-full md:w-2/3 mx-auto">
+          {renderChart()}
+        </div>
       </div>
     </div>
   );

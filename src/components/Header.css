@@ -1,0 +1,76 @@
+/* Header.css */
+
+/* Overall Header Styling */
+.header {
+  width: 100%;
+  background: linear-gradient(to right, #ffffff, #eff6ff); /* from-white to-blue-50 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Container to center header content */
+.header-container {
+  max-width: 1280px; /* Adjust based on your design */
+  margin: 0 auto;
+  padding: 1rem 1.5rem; /* Equivalent to py-4 and px-6 */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo Styles */
+.logo {
+  font-size: 1.875rem; /* ~30px */
+  font-weight: 800;
+  color: #2563eb; /* Tailwind blue-600 */
+  letter-spacing: -0.025em; /* tracking-tight */
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+
+.logo:hover {
+  opacity: 0.9;
+}
+
+/* Navigation Wrapper */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* gap-4 is roughly 1rem */
+}
+
+/* Grouping Login/Register Links */
+.nav-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Login Link Styling */
+.login-link {
+  padding: 0.5rem 1.25rem; /* py-2, px-5 */
+  border: 1px solid #2563eb; /* border-blue-600 */
+  color: #2563eb;
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* shadow-sm */
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.login-link:hover {
+  background-color: #bfdbfe; /* hover:bg-blue-100 */
+}
+
+/* Register Link Styling */
+.register-link {
+  padding: 0.5rem 1.25rem; /* py-2, px-5 */
+  background-color: #2563eb; /* blue-600 */
+  color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* shadow */
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.register-link:hover {
+  background-color: #1d4ed8; /* hover:bg-blue-700 */
+}
