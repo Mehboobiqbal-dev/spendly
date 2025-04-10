@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
+// src/pages/Register.tsx
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
 
 const Register: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError]       = useState('');
   const navigate = useNavigate();
 
-  const { signInWithGoogle, signInWithGithub } = useAuth();
+  const { user, signInWithGoogle, signInWithGithub } = useAuth();
 
+  // Automatically navigate when a user is present (after successful sign‑up)
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
+
+  // Handle email/password registration
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -25,7 +34,7 @@ const Register: React.FC = () => {
     }
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      navigate('/dashboard');
+      // no need to call navigate here; the useEffect will trigger on auth change.
     } catch (err: any) {
       if (err.code === 'auth/email-already-in-use') {
         setError('This email is already registered.');
@@ -91,13 +100,22 @@ const Register: React.FC = () => {
           <p className="text-center text-sm text-black">Or sign up with:</p>
           <div className="flex justify-center gap-4 mt-2">
             <button
-              onClick={signInWithGoogle}
+              // Option 1: Rely on the observer to navigate after successful social sign‑in
+              onClick={async () => {
+                await signInWithGoogle();
+                // Optionally, you can also explicitly navigate:
+                // navigate('/dashboard');
+              }}
               className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
             >
               Google
             </button>
             <button
-              onClick={signInWithGithub}
+              onClick={async () => {
+                await signInWithGithub();
+                // Optionally, you can also explicitly navigate:
+                // navigate('/dashboard');
+              }}
               className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
             >
               GitHub

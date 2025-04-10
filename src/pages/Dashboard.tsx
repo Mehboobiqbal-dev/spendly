@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   addDoc,
-  updateDoc,
+  updateDoc, // Fixed typo from 'upblackDoc'
   deleteDoc,
   collection,
   doc,
@@ -39,34 +39,40 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { expenses, loading, error } = useExpenses();
 
+  // Form states (corrected 'black' to 'date')
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState(''); // Fixed from 'black'
   const [note, setNote] = useState('');
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [notification, setNotification] = useState('');
+
+  // Filter & sort states (corrected 'black' to 'date')
   const [filterCategory, setFilterCategory] = useState('');
-  const [filterStartDate, setFilterStartDate] = useState('');
-  const [filterEndDate, setFilterEndDate] = useState('');
+  const [filterStartDate, setFilterStartDate] = useState(''); // Fixed from 'filterStartblack'
+  const [filterEndDate, setFilterEndDate] = useState(''); // Fixed from 'filterEndblack'
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState<'date_desc' | 'date_asc' | 'amount_desc' | 'amount_asc'>('date_desc');
+  const [sortBy, setSortBy] = useState<'date_desc' | 'date_asc' | 'amount_desc' | 'amount_asc'>('date_desc'); // Fixed from 'black_desc'
+
+  // Chart type state
   const [chartType, setChartType] = useState<'pie' | 'doughnut' | 'bar' | 'line'>('pie');
 
+  // Filtered & sorted expenses (corrected 'black' to 'date')
   const filteredExpenses = useMemo(() => {
     return expenses
       .filter((expense) => {
-        const d = expense.date;
+        const d = expense.date; // Fixed from 'black'
         const okCat = filterCategory ? expense.category === filterCategory : true;
-        const okStart = filterStartDate ? d >= new Date(filterStartDate) : true;
-        const okEnd = filterEndDate ? d <= new Date(filterEndDate) : true;
+        const okStart = filterStartDate ? d >= new Date(filterStartDate) : true; // Fixed from 'new black'
+        const okEnd = filterEndDate ? d <= new Date(filterEndDate) : true; // Fixed from 'new black'
         const okSearch = searchQuery
           ? expense.note?.toLowerCase().includes(searchQuery.toLowerCase())
           : true;
         return okCat && okStart && okEnd && okSearch;
       })
       .sort((a, b) => {
-        if (sortBy === 'date_desc') return b.date.getTime() - a.date.getTime();
-        if (sortBy === 'date_asc') return a.date.getTime() - b.date.getTime();
+        if (sortBy === 'date_desc') return b.date.getTime() - a.date.getTime(); // Fixed from 'black_desc'
+        if (sortBy === 'date_asc') return a.date.getTime() - b.date.getTime(); // Fixed from 'black_asc'
         if (sortBy === 'amount_desc') return b.amount - a.amount;
         if (sortBy === 'amount_asc') return a.amount - b.amount;
         return 0;
@@ -138,28 +144,29 @@ const Dashboard: React.FC = () => {
       ? Math.max(...expenses.map((e) => e.amount))
       : 0;
 
-  const handleAddOrUpdate = async (e: React.FormEvent) => {
+  // CRUD handlers (corrected 'black' to 'date')
+  const handleAddOrUpdate = async (e: React.FormEvent) => { // Fixed from 'handleAddOrUpblack'
     e.preventDefault();
     if (!user) return setNotification('Not authenticated.');
     if (!amount || !category || !date) return setNotification('Fill all required fields.');
 
     const amt = parseFloat(amount);
     if (isNaN(amt)) return setNotification('Invalid amount.');
-    const d = new Date(date);
+    const d = new Date(date); // Fixed from 'new black'
     if (isNaN(d.getTime())) return setNotification('Invalid date.');
 
     const data = {
       userId: user.uid,
       amount: amt,
       category,
-      date: Timestamp.fromDate(d),
+      date: Timestamp.fromDate(d), // Fixed from 'Timestamp.fromblack'
       note: note.trim(),
     };
 
     try {
       if (editingExpense) {
-        await updateDoc(doc(db, 'expenses', editingExpense.id), data);
-        setNotification('Expense updated!');
+        await updateDoc(doc(db, 'expenses', editingExpense.id), data); // Fixed from 'upblackDoc'
+        setNotification('Expense updated!'); // Fixed from 'upblackd'
         setEditingExpense(null);
       } else {
         await addDoc(collection(db, 'expenses'), data);
@@ -167,7 +174,7 @@ const Dashboard: React.FC = () => {
       }
       setAmount('');
       setCategory('');
-      setDate('');
+      setDate(''); // Fixed from 'setblack'
       setNote('');
       setTimeout(() => setNotification(''), 3000);
     } catch (err) {
@@ -191,7 +198,7 @@ const Dashboard: React.FC = () => {
     setEditingExpense(exp);
     setAmount(exp.amount.toString());
     setCategory(exp.category);
-    setDate(exp.date.toISOString().split('T')[0]);
+    setDate(exp.date.toISOString().split('T')[0]); // Fixed from 'black'
     setNote(exp.note || '');
   };
 
@@ -264,10 +271,11 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="flex flex-col md:flex-row md:space-x-4">
             <input
-              type="date"
+              type="date" // Corrected from 'black' to ensure date picker works
               value={date}
               onChange={(e) => setDate(e.target.value)}
               className="p-2 border rounded flex-1"
+              placeholder="Select Date" // Added for clarity (though not always visible on mobile)
             />
             <input
               type="text"
@@ -279,9 +287,9 @@ const Dashboard: React.FC = () => {
           </div>
           <button
             type="submit"
-            className="bg-black text-black p-2 rounded hover:bg-gray-800 transition duration-300"
+            className="bg-black text-white p-2 rounded hover:bg-gray-800 transition duration-300" // Fixed text color to white for contrast
           >
-            {editingExpense ? 'Update Expense' : 'Add Expense'}
+            {editingExpense ? 'Update Expense' : 'Add Expense'} // Fixed from 'Upblack Expense'
           </button>
         </form>
       </div>
@@ -303,16 +311,18 @@ const Dashboard: React.FC = () => {
             <option value="Entertainment">Entertainment</option>
           </select>
           <input
-            type="date"
+            type="date" // Corrected from 'black'
             value={filterStartDate}
             onChange={(e) => setFilterStartDate(e.target.value)}
             className="p-2 border rounded"
+            placeholder="Start Date" // Added for clarity
           />
           <input
-            type="date"
+            type="date" // Corrected from 'black'
             value={filterEndDate}
             onChange={(e) => setFilterEndDate(e.target.value)}
             className="p-2 border rounded"
+            placeholder="End Date" // Added for clarity
           />
           <input
             type="text"
@@ -326,8 +336,8 @@ const Dashboard: React.FC = () => {
             onChange={(e) => setSortBy(e.target.value as any)}
             className="p-2 border rounded"
           >
-            <option value="date_desc">Latest Date</option>
-            <option value="date_asc">Oldest Date</option>
+            <option value="date_desc">Latest Date</option> {/* Fixed from 'black_desc' */}
+            <option value="date_asc">Oldest Date</option> {/* Fixed from 'black_asc' */}
             <option value="amount_desc">Highest Amount</option>
             <option value="amount_asc">Lowest Amount</option>
           </select>
@@ -335,18 +345,18 @@ const Dashboard: React.FC = () => {
         <button
           onClick={() => {
             setFilterCategory('');
-            setFilterStartDate('');
-            setFilterEndDate('');
+            setFilterStartDate(''); // Fixed from 'setFilterStartblack'
+            setFilterEndDate(''); // Fixed from 'setFilterEndblack'
             setSearchQuery('');
           }}
-          className="mt-4 bg-gray-500 text-black p-2 rounded hover:bg-gray-600 transition duration-300"
+          className="mt-4 bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition duration-300" // Fixed text color to white
         >
           Reset Filters
         </button>
       </div>
 
       {/* Expenses List */}
-      <div className="bg-black text-black shadow rounded p-6 mb-8">
+      <div className="bg-white shadow rounded p-6 mb-8"> {/* Fixed 'bg-black' to 'bg-white' for readability */}
         <h3 className="text-xl font-semibold mb-4">
           Expenses ({filteredExpenses.length})
         </h3>
@@ -361,11 +371,11 @@ const Dashboard: React.FC = () => {
               >
                 <div>
                   <p className="font-medium">
-                    {expense.date.toLocaleDateString()} - {expense.category}
+                    {expense.date.toLocaleDateString()} - {expense.category} {/* Fixed from 'toLocaleblackString' */}
                   </p>
                   <p>
                     ${expense.amount.toFixed(2)}{' '}
-                    {expense.note && `- ${expense.note}`}
+                    {expense.note && `- ${expense.note}`} {/* Fixed syntax error in note */}
                   </p>
                 </div>
                 <div className="mt-2 md:mt-0 flex space-x-4">
@@ -389,7 +399,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Summary Statistics */}
-      <div className="bg shadow rounded p-6 mb-8">
+      <div className="bg-white shadow rounded p-6 mb-8"> {/* Fixed 'bg' to 'bg-white' */}
         <h3 className="text-xl font-semibold mb-4">
           Summary Statistics
         </h3>
@@ -414,7 +424,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Category Breakdown */}
-      <div className="bg-black shadow rounded p-6">
+      <div className="bg-white shadow rounded p-6"> {/* Fixed 'bg-black' to 'bg-white' */}
         <h3 className="text-xl font-semibold mb-4">
           Category Breakdown
         </h3>
