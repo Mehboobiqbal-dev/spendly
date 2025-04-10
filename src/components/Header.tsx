@@ -1,39 +1,46 @@
-// src/components/Header.tsx
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { Link, useLocation } from 'react-router-dom';
 
 const Header: React.FC = () => {
-  const { user, logout } = useAuth();
+  const location = useLocation();
+
+  // Check the current route so that we don't display a link to the page we’re already on
+  const isLoginPage = location.pathname === '/login';
+  const isRegisterPage = location.pathname === '/register';
 
   return (
-    <header className="flex items-center justify-between p-4 bg-white shadow-md">
-      <Link to="/" className="text-2xl font-bold text-blue-600">
-        Spendly
-      </Link>
+    <header className="w-full bg-gradient-to-r from-white to-blue-50 shadow-lg">
+      <div className="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between">
+        {/* Logo */}
+        <Link
+          to="/"
+          className="text-3xl font-extrabold text-blue-600 tracking-tight hover:opacity-90 transition"
+        >
+          Spendly
+        </Link>
 
-      <nav>
-        {user ? (
-          <div className="flex items-center space-x-4">
-            <span className="text-gray-700">Hello, {user.email}</span>
-            <button
-              onClick={logout}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
-            >
-              Logout
-            </button>
+        {/* Navigation: Only Login and Register */}
+        <nav className="flex items-center gap-4">
+          <div className="flex items-center gap-4">
+            {!isLoginPage && (
+              <Link
+                to="/login"
+                className="px-5 py-2 border border-blue-600 text-blue-600 rounded-lg shadow-sm hover:bg-blue-100 transition-all"
+              >
+                Login
+              </Link>
+            )}
+            {!isRegisterPage && (
+              <Link
+                to="/register"
+                className="px-5 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition-all"
+              >
+                Register
+              </Link>
+            )}
           </div>
-        ) : (
-          <div className="space-x-4">
-            <Link to="/login" className="text-blue-500 hover:underline">
-              Login
-            </Link>
-            <Link to="/register" className="text-blue-500 hover:underline">
-              Register
-            </Link>
-          </div>
-        )}
-      </nav>
+        </nav>
+      </div>
     </header>
   );
 };

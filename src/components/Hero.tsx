@@ -13,7 +13,7 @@ const Hero: React.FC = () => (
         Log your daily spending, categorize effortlessly, and unlock insights
         through beautiful, real‑time charts.
       </p>
-      <div className="space-x-4">
+      <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-4">
         <Link
           to="/register"
           className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
@@ -29,12 +29,7 @@ const Hero: React.FC = () => (
       </div>
     </div>
     <div className="md:w-1/2 mb-8 md:mb-0">
-      {/* Replace with your chosen hero image or illustration */}
-      <img
-        src="/assets/expense-illustration.svg"
-        alt="Track expenses illustration"
-        className="w-full h-auto"
-      />
+     
     </div>
   </section>
 );
