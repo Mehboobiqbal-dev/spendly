@@ -106,7 +106,7 @@ const Register: React.FC = () => {
                 // Optionally, you can also explicitly navigate:
                 // navigate('/dashboard');
               }}
-              className="px-4 py-2 bg-red-500 text-black rounded hover:bg-red-600 transition"
+              className="px-4 py-2 bg-red-500 text-red rounded hover:bg-red-600 transition"
             >
               Google
             </button>
@@ -115,7 +115,7 @@ const Register: React.FC = () => {
                 await signInWithGithub();
                
               }}
-              className="px-4 py-2 bg-black text-black rounded hover:bg-gray-800 transition"
+              className="px-4 py-2 bg-black text-red rounded hover:bg-gray-800 transition"
             >
               GitHub
             </button>
