@@ -10,14 +10,17 @@ import PrivateRoute from './components/PrivateRoute';
 import bgImage from './assets/background.jpg'; // Directly import the background image
 
 const appStyle: React.CSSProperties = {
- 
+  backgroundImage: `url(${bgImage})`,
+  backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center',
+  
 };
 
 const App: React.FC = () => {
-  // JavaScript preload: this creates a new Image and sets its src so the browser caches it
   useEffect(() => {
     const img = new Image();
-    img.src = bgImage;
+    img.src = bgImage; // Preload image
   }, []);
 
   return (

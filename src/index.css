@@ -27,6 +27,7 @@ a:hover {
 }
 
 body {
+  color:black;
   background-image: url('/assets/background.jpg');
   background-size: cover;
   background-repeat: no-repeat;
@@ -43,15 +44,15 @@ body {
   }
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+@media (max-width: 768px) {
+  body {
+    color: black;
   }
+}
+
   a:hover {
     color: #747bff;
   }
   button {
     background-color: #f9f9f9;
   }
-}
