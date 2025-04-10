@@ -1,16 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError]       = useState('');
   const navigate = useNavigate();
 
-  const { signInWithGoogle, signInWithGithub } = useAuth();
+  const { user, signInWithGoogle, signInWithGithub } = useAuth();
+
+  // Automatically navigate to dashboard if user is already logged in
+  useEffect(() => {
+    if(user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,13 +94,19 @@ const Login: React.FC = () => {
           <p className="text-center text-sm text-black">Or sign in with:</p>
           <div className="flex justify-center gap-4 mt-2">
             <button
-              onClick={signInWithGoogle}
+              onClick={async () => {
+                await signInWithGoogle();
+                navigate('/dashboard');  // or rely on useEffect auto navigation
+              }}
               className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
             >
               Google
             </button>
             <button
-              onClick={signInWithGithub}
+              onClick={async () => {
+                await signInWithGithub();
+                navigate('/dashboard');
+              }}
               className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
             >
               GitHub
