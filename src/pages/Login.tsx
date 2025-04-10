@@ -84,7 +84,8 @@ const Login: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full py-3 bg-black text-black font-semibold rounded-lg hover:bg-gray-800 transition"
+            style={{ color: 'black' }}
+            className="w-full py-3 bg-black font-semibold rounded-lg hover:bg-gray-800 transition"
           >
             Log In
           </button>
@@ -98,8 +99,9 @@ const Login: React.FC = () => {
                 await signInWithGoogle();
                 navigate('/dashboard');  // or rely on useEffect auto navigation
               }}
-              className="px-4 py-2 bg-red-500 text-red rounded hover:bg-red-600 transition"
-            >
+              style={{ color: 'black' }}
+  className="w-full py-3 bg-black font-semibold rounded-lg hover:bg-gray-800 transition"
+>
               Google
             </button>
             <button
@@ -107,8 +109,9 @@ const Login: React.FC = () => {
                 await signInWithGithub();
                 navigate('/dashboard');
               }}
-              className="px-4 py-2 bg-black text-red rounded hover:bg-gray-800 transition"
-            >
+              style={{ color: 'black' }}
+  className="w-full py-3 bg-black font-semibold rounded-lg hover:bg-gray-800 transition"
+>
               GitHub
             </button>
           </div>

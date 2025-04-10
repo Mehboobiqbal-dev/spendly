@@ -6,7 +6,7 @@ const Hero: React.FC = () => (
   <section className="flex flex-col-reverse md:flex-row items-center md:space-x-8 p-8 bg-gradient-to-r from-blue-50 to-white">
     <div className="md:w-1/2">
       <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-black-700">
-        Spendly
+      
       </h1>
       <p className="text-lg text-black-700 mb-6">
         Take control of your finances with Spendly—your personal expense tracker.
