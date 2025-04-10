@@ -90,7 +90,7 @@ const Register: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full py-3 bg-black text-black font-semibold rounded-lg hover:bg-gray-800 transition"
+            className="w-full py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition"
           >
             Register
           </button>
@@ -105,6 +105,15 @@ const Register: React.FC = () => {
   }}
   className="px-4 py-2 bg-red-500 text-black rounded hover:bg-red-600 transition"
 >
+ 
+</button>
+
+<button
+  onClick={async () => {
+    await signInWithGoogle();
+  }}
+  className="px-4 py-2 bg-red-500 text-white border border-red-700 rounded hover:bg-red-600 transition"
+>
   Google
 </button>
 
@@ -112,7 +121,7 @@ const Register: React.FC = () => {
   onClick={async () => {
     await signInWithGithub();
   }}
-  className="px-4 py-2 bg-red-500 text-black rounded hover:bg-red-600 transition"
+  className="px-4 py-2 bg-red-500 text-white border border-red-700 rounded hover:bg-red-600 transition"
 >
   GitHub
 </button>
