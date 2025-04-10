@@ -35,7 +35,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+      <div className="max-w-md w-full bg-black p-8 rounded-lg shadow-lg">
         <h2 className="text-3xl font-extrabold text-center text-black mb-6">
           Sign In to Spendly
         </h2>
@@ -77,7 +77,7 @@ const Login: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition"
+            className="w-full py-3 bg-black text-black font-semibold rounded-lg hover:bg-gray-800 transition"
           >
             Log In
           </button>
@@ -88,13 +88,13 @@ const Login: React.FC = () => {
           <div className="flex justify-center gap-4 mt-2">
             <button
               onClick={signInWithGoogle}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+              className="px-4 py-2 bg-red-500 text-black rounded hover:bg-red-600 transition"
             >
               Google
             </button>
             <button
               onClick={signInWithGithub}
-              className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
+              className="px-4 py-2 bg-black text-black rounded hover:bg-gray-800 transition"
             >
               GitHub
             </button>

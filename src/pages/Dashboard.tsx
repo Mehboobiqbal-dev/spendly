@@ -233,7 +233,7 @@ const Dashboard: React.FC = () => {
       )}
 
       {/* Add/Edit Form */}
-      <div className="bg-white shadow rounded p-6 mb-8">
+      <div className="bg-black shadow rounded p-6 mb-8">
         <h3 className="text-xl font-semibold mb-4">
           {editingExpense ? 'Edit Expense' : 'Add Expense'}
         </h3>
@@ -279,7 +279,7 @@ const Dashboard: React.FC = () => {
           </div>
           <button
             type="submit"
-            className="bg-black text-white p-2 rounded hover:bg-gray-800 transition duration-300"
+            className="bg-black text-black p-2 rounded hover:bg-gray-800 transition duration-300"
           >
             {editingExpense ? 'Update Expense' : 'Add Expense'}
           </button>
@@ -287,7 +287,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Filters & Sorting */}
-      <div className="bg-white shadow rounded p-6 mb-8">
+      <div className="bg-black shadow rounded p-6 mb-8">
         <h3 className="text-xl font-semibold mb-4">Filters & Sorting</h3>
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <select
@@ -339,14 +339,14 @@ const Dashboard: React.FC = () => {
             setFilterEndDate('');
             setSearchQuery('');
           }}
-          className="mt-4 bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition duration-300"
+          className="mt-4 bg-gray-500 text-black p-2 rounded hover:bg-gray-600 transition duration-300"
         >
           Reset Filters
         </button>
       </div>
 
       {/* Expenses List */}
-      <div className="bg-white shadow rounded p-6 mb-8">
+      <div className="bg-black text-black shadow rounded p-6 mb-8">
         <h3 className="text-xl font-semibold mb-4">
           Expenses ({filteredExpenses.length})
         </h3>
@@ -389,7 +389,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Summary Statistics */}
-      <div className="bg-white shadow rounded p-6 mb-8">
+      <div className="bg-black shadow rounded p-6 mb-8">
         <h3 className="text-xl font-semibold mb-4">
           Summary Statistics
         </h3>
@@ -414,7 +414,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Category Breakdown */}
-      <div className="bg-white shadow rounded p-6">
+      <div className="bg-black shadow rounded p-6">
         <h3 className="text-xl font-semibold mb-4">
           Category Breakdown
         </h3>

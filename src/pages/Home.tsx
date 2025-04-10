@@ -9,7 +9,7 @@ const Home: React.FC = () => (
     <main className="flex-grow">
       <Hero />
 
-      <section className="py-12 px-8 bg-white">
+      <section className="py-12 px-8 bg-black">
         <h2 className="text-3xl font-semibold text-center mb-8 text-black">Core Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           <div className="p-6 border rounded-lg shadow-sm">

@@ -10,7 +10,7 @@ const Header: React.FC = () => {
   const isRegisterPage = location.pathname === '/register';
 
   return (
-    <header className="w-full bg-gradient-to-r from-white to-blue-50 shadow-lg">
+    <header className="w-full bg-gradient-to-r from-black to-blue-50 shadow-lg">
       <div className="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link
