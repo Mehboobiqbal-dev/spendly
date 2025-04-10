@@ -10,7 +10,7 @@ import PrivateRoute from './components/PrivateRoute';
 import bgImage from './assets/background.jpg'; // Directly import the background image
 
 const appStyle: React.CSSProperties = {
-  backgroundImage: `url(${bgImage})`,
+
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
   backgroundPosition: 'center',
