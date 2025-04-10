@@ -98,7 +98,7 @@ const Login: React.FC = () => {
                 await signInWithGoogle();
                 navigate('/dashboard');  // or rely on useEffect auto navigation
               }}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+              className="px-4 py-2 bg-red-500 text-black rounded hover:bg-red-600 transition"
             >
               Google
             </button>
@@ -107,7 +107,7 @@ const Login: React.FC = () => {
                 await signInWithGithub();
                 navigate('/dashboard');
               }}
-              className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
+              className="px-4 py-2 bg-black text-black rounded hover:bg-gray-800 transition"
             >
               GitHub
             </button>

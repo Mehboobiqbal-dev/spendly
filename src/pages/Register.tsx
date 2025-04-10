@@ -106,7 +106,7 @@ const Register: React.FC = () => {
                 // Optionally, you can also explicitly navigate:
                 // navigate('/dashboard');
               }}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+              className="px-4 py-2 bg-red-500 text-black rounded hover:bg-red-600 transition"
             >
               Google
             </button>

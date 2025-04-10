@@ -218,7 +218,7 @@ const Dashboard: React.FC = () => {
     <div className="container mx-auto p-4 text-black [&_*]:text-black">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold">Dashboard</h2>
+        <h2 className="text-3xl text-black font-bold">Dashboard</h2>
         <button
           onClick={handleLogout}
           className="hover:underline transition duration-300"
