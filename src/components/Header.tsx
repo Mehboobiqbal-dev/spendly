@@ -25,10 +25,11 @@ const Header: React.FC = () => {
           <div className="flex items-center gap-4">
             {!isLoginPage && (
               <Link
-                to="/login"
+                to="/register"
                 className="px-5 py-2 border border-blue-600 text-blue-600 rounded-lg shadow-sm hover:bg-blue-100 transition-all"
               >
-                Login
+                Register
+              
               </Link>
             )}
             

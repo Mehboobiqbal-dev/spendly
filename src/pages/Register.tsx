@@ -5,9 +5,9 @@ import { auth } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
 
 const Register: React.FC = () => {
-  const [email, setEmail]       = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError]       = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const { signInWithGoogle, signInWithGithub } = useAuth();
@@ -40,19 +40,19 @@ const Register: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-3xl font-extrabold text-center text-blue-600 mb-6">
+        <h2 className="text-3xl font-extrabold text-center text-black mb-6">
           Create Your Account
         </h2>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-800 border border-red-200 rounded">
+          <div className="mb-4 p-3 bg-red-100 text-black border border-red-200 rounded">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-black mb-1">
               Email address
             </label>
             <input
@@ -60,13 +60,13 @@ const Register: React.FC = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-black focus:border-black"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="password" className="block text-sm font-medium text-black mb-1">
               Password
             </label>
             <input
@@ -74,21 +74,21 @@ const Register: React.FC = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-black focus:border-black"
               placeholder="••••••••"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
+            className="w-full py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition"
           >
             Register
           </button>
         </form>
 
         <div className="mt-6">
-          <p className="text-center text-sm text-gray-600">Or sign up with:</p>
+          <p className="text-center text-sm text-black">Or sign up with:</p>
           <div className="flex justify-center gap-4 mt-2">
             <button
               onClick={signInWithGoogle}
@@ -98,16 +98,16 @@ const Register: React.FC = () => {
             </button>
             <button
               onClick={signInWithGithub}
-              className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-900 transition"
+              className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
             >
               GitHub
             </button>
           </div>
         </div>
 
-        <p className="mt-6 text-center text-sm text-gray-600">
+        <p className="mt-6 text-center text-sm text-black">
           Already have an account?{' '}
-          <Link to="/login" className="text-blue-600 hover:underline">
+          <Link to="/login" className="text-black hover:underline">
             Log In
           </Link>
         </p>
