@@ -97,7 +97,7 @@ const Login: React.FC = () => {
             <button
               onClick={async () => {
                 await signInWithGoogle();
-                navigate('/dashboard');  // or rely on useEffect auto navigation
+                navigate('/dashboard');  
               }}
               style={{ color: 'black' }}
   className="w-full py-3 bg-black font-semibold rounded-lg hover:bg-gray-800 transition"

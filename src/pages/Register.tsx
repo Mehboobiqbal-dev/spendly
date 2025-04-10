@@ -1,4 +1,3 @@
-// src/pages/Register.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
@@ -13,14 +12,14 @@ const Register: React.FC = () => {
 
   const { user, signInWithGoogle, signInWithGithub } = useAuth();
 
-  // Automatically navigate when a user is present (after successful sign‑up)
+  
   useEffect(() => {
     if (user) {
       navigate('/dashboard');
     }
   }, [user, navigate]);
 
-  // Handle email/password registration
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -34,7 +33,7 @@ const Register: React.FC = () => {
     }
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      // No need to call navigate here; useEffect will trigger when auth state changes.
+      
     } catch (err: any) {
       if (err.code === 'auth/email-already-in-use') {
         setError('This email is already registered.');

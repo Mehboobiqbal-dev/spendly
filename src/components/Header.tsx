@@ -5,7 +5,7 @@ import './Header.css';
 const Header: React.FC = () => {
   const location = useLocation();
 
-  // Check the current route so that we don't display a link to the page we’re already on
+ 
   const isLoginPage = location.pathname === '/login';
   const isRegisterPage = location.pathname === '/register';
 
