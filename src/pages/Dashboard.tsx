@@ -39,25 +39,19 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { expenses, loading, error } = useExpenses();
 
-  // Form states
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
   const [date, setDate] = useState('');
   const [note, setNote] = useState('');
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [notification, setNotification] = useState('');
-
-  // Filter & sort states
   const [filterCategory, setFilterCategory] = useState('');
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'date_desc' | 'date_asc' | 'amount_desc' | 'amount_asc'>('date_desc');
-
-  // Chart type state
   const [chartType, setChartType] = useState<'pie' | 'doughnut' | 'bar' | 'line'>('pie');
 
-  // Filtered & sorted expenses
   const filteredExpenses = useMemo(() => {
     return expenses
       .filter((expense) => {
@@ -79,12 +73,10 @@ const Dashboard: React.FC = () => {
       });
   }, [expenses, filterCategory, filterStartDate, filterEndDate, searchQuery, sortBy]);
 
-  // Debug
   useEffect(() => {
     console.log({ user, expenses, filteredExpenses });
   }, [user, expenses, filteredExpenses]);
 
-  // Category totals for charts
   const categoryTotals = useMemo(() => {
     const t: Record<string, number> = {};
     expenses.forEach((e) => {
@@ -123,7 +115,7 @@ const Dashboard: React.FC = () => {
 
   const renderChart = () => {
     if (expenses.length === 0) {
-      return <p className="text-gray-500">No data to display.</p>;
+      return <p className="text-black">No data to display.</p>;
     }
     switch (chartType) {
       case 'pie':
@@ -139,7 +131,6 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Summary stats
   const totalExpenses = expenses.length;
   const totalAmount = expenses.reduce((sum, e) => sum + e.amount, 0);
   const highestExpense =
@@ -147,7 +138,6 @@ const Dashboard: React.FC = () => {
       ? Math.max(...expenses.map((e) => e.amount))
       : 0;
 
-  // CRUD handlers
   const handleAddOrUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return setNotification('Not authenticated.');
@@ -213,23 +203,23 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  if (loading) return <div className="text-center p-4">Loading...</div>;
+  if (loading) return <div className="text-center p-4 text-black">Loading...</div>;
   if (error)
     return (
-      <div className="text-center p-4 text-red-500">
+      <div className="text-center p-4 text-black">
         Error: {error} <br />
         Check console or Firestore setup.
       </div>
     );
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 text-black [&_*]:text-black">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-blue-600">Dashboard</h2>
+        <h2 className="text-3xl font-bold">Dashboard</h2>
         <button
           onClick={handleLogout}
-          className="text-blue-500 hover:underline transition duration-300"
+          className="hover:underline transition duration-300"
         >
           Logout
         </button>
@@ -237,7 +227,7 @@ const Dashboard: React.FC = () => {
 
       {/* Notification */}
       {notification && (
-        <div className="mb-4 p-2 bg-green-100 text-green-800 border border-green-300 rounded">
+        <div className="mb-4 p-2 bg-green-100 border border-green-300 rounded">
           {notification}
         </div>
       )}
@@ -289,7 +279,7 @@ const Dashboard: React.FC = () => {
           </div>
           <button
             type="submit"
-            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300"
+            className="bg-black text-white p-2 rounded hover:bg-gray-800 transition duration-300"
           >
             {editingExpense ? 'Update Expense' : 'Add Expense'}
           </button>
@@ -361,9 +351,7 @@ const Dashboard: React.FC = () => {
           Expenses ({filteredExpenses.length})
         </h3>
         {filteredExpenses.length === 0 ? (
-          <p className="text-gray-500">
-            No expenses found. Try resetting filters or adding new expenses.
-          </p>
+          <p>No expenses found. Try resetting filters or adding new expenses.</p>
         ) : (
           <ul className="space-y-4">
             {filteredExpenses.map((expense) => (
@@ -375,7 +363,7 @@ const Dashboard: React.FC = () => {
                   <p className="font-medium">
                     {expense.date.toLocaleDateString()} - {expense.category}
                   </p>
-                  <p className="text-gray-600">
+                  <p>
                     ${expense.amount.toFixed(2)}{' '}
                     {expense.note && `- ${expense.note}`}
                   </p>
@@ -383,13 +371,13 @@ const Dashboard: React.FC = () => {
                 <div className="mt-2 md:mt-0 flex space-x-4">
                   <button
                     onClick={() => handleEdit(expense)}
-                    className="text-blue-500 hover:underline"
+                    className="hover:underline"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(expense.id)}
-                    className="text-red-500 hover:underline"
+                    className="hover:underline"
                   >
                     Delete
                   </button>
@@ -410,17 +398,17 @@ const Dashboard: React.FC = () => {
             <p className="text-2xl font-bold">
               ${totalAmount.toFixed(2)}
             </p>
-            <p className="text-gray-600">Total Amount</p>
+            <p>Total Amount</p>
           </div>
           <div className="p-4 border rounded text-center">
             <p className="text-2xl font-bold">{totalExpenses}</p>
-            <p className="text-gray-600">Number of Expenses</p>
+            <p>Number of Expenses</p>
           </div>
           <div className="p-4 border rounded text-center">
             <p className="text-2xl font-bold">
               ${highestExpense.toFixed(2)}
             </p>
-            <p className="text-gray-600">Highest Expense</p>
+            <p>Highest Expense</p>
           </div>
         </div>
       </div>
@@ -430,8 +418,6 @@ const Dashboard: React.FC = () => {
         <h3 className="text-xl font-semibold mb-4">
           Category Breakdown
         </h3>
-
-        {/* Chart Type Selector */}
         <div className="mb-4 flex items-center space-x-2">
           <label htmlFor="chartType" className="font-medium">
             Chart Type:
@@ -439,9 +425,7 @@ const Dashboard: React.FC = () => {
           <select
             id="chartType"
             value={chartType}
-            onChange={(e) =>
-              setChartType(e.target.value as any)
-            }
+            onChange={(e) => setChartType(e.target.value as any)}
             className="p-2 border rounded"
           >
             <option value="pie">Pie</option>
@@ -450,7 +434,6 @@ const Dashboard: React.FC = () => {
             <option value="line">Line</option>
           </select>
         </div>
-
         <div className="w-full md:w-2/3 mx-auto">
           {renderChart()}
         </div>
