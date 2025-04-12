@@ -23,7 +23,10 @@ import {
 } from 'chart.js';
 import { Pie, Doughnut, Bar, Line } from 'react-chartjs-2';
 import { Timestamp } from 'firebase/firestore';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaMoneyBillWave, FaList, FaChartLine } from 'react-icons/fa6';
 
+// Register Chart.js components
 ChartJS.register(
   ArcElement,
   BarElement,
@@ -39,21 +42,21 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { expenses, loading, error } = useExpenses();
 
+  // State declarations
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
   const [date, setDate] = useState('');
   const [note, setNote] = useState('');
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [notification, setNotification] = useState('');
-
   const [filterCategory, setFilterCategory] = useState('');
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'date_desc' | 'date_asc' | 'amount_desc' | 'amount_asc'>('date_desc');
-
   const [chartType, setChartType] = useState<'pie' | 'doughnut' | 'bar' | 'line'>('pie');
 
+  // Filtered and sorted expenses
   const filteredExpenses = useMemo(() => {
     return expenses
       .filter((expense) => {
@@ -75,10 +78,12 @@ const Dashboard: React.FC = () => {
       });
   }, [expenses, filterCategory, filterStartDate, filterEndDate, searchQuery, sortBy]);
 
+  // Debug logging
   useEffect(() => {
     console.log({ user, expenses, filteredExpenses });
   }, [user, expenses, filteredExpenses]);
 
+  // Category totals for chart
   const categoryTotals = useMemo(() => {
     const t: Record<string, number> = {};
     expenses.forEach((e) => {
@@ -123,7 +128,7 @@ const Dashboard: React.FC = () => {
       case 'pie':
         return <Pie data={chartData} options={chartOptions} />;
       case 'doughnut':
-        return <Doughnut data={chartData} className="text-black" options={chartOptions} />;
+        return <Doughnut data={chartData} options={chartOptions} />;
       case 'bar':
         return <Bar data={chartData} options={chartOptions} />;
       case 'line':
@@ -133,13 +138,12 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  // Summary statistics
   const totalExpenses = expenses.length;
   const totalAmount = expenses.reduce((sum, e) => sum + e.amount, 0);
-  const highestExpense =
-    expenses.length > 0
-      ? Math.max(...expenses.map((e) => e.amount))
-      : 0;
+  const highestExpense = expenses.length > 0 ? Math.max(...expenses.map((e) => e.amount)) : 0;
 
+  // Handlers
   const handleAddOrUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return setNotification('Not authenticated.');
@@ -205,103 +209,142 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  // Loading and error states
   if (loading) return <div className="text-center p-4 text-black">Loading...</div>;
-  if (error)
+  if (error) {
     return (
       <div className="text-center p-4 text-black">
         Error: {error} <br />
         Check console or Firestore setup.
       </div>
     );
+  }
 
   return (
-    <div className="container mx-auto p-4 text-black [&_*]:text-black">
+    <div className="container mx-auto p-6 text-black [&_*]:text-black">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl text-black font-bold">Dashboard</h2>
-        <button
-          onClick={handleLogout}
-          style={{ color: 'black' }}
-  className="py-3 bg-black font-semibold rounded-lg hover:bg-gray-800 transition"
->
-          Logout
-        </button>
-      </div>
+      <motion.div
+        className="bg-gradient-to-r from-gray-100 to-gray-200 p-4 rounded-lg shadow-lg mb-8"
+        whileHover={{ rotateX: 2, rotateY: 2 }}
+        transition={{ type: 'spring', stiffness: 300 }}
+      >
+        <div className="flex justify-between items-center">
+          <h2 className="text-3xl font-bold">Dashboard</h2>
+          <motion.button
+            onClick={handleLogout}
+            className="py-2 px-4 bg-black text-white font-semibold rounded-lg"
+            whileHover={{ scale: 1.05, rotate: 1 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 400 }}
+          >
+            Logout
+          </motion.button>
+        </div>
+      </motion.div>
 
       {/* Notification */}
-      {notification && (
-        <div className="mb-4 p-2 bg-green-100 border border-green-300 rounded">
-          {notification}
-        </div>
-      )}
+      <AnimatePresence>
+        {notification && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className="mb-6 p-3 bg-green-100 border border-green-300 rounded-lg shadow-md"
+            transition={{ duration: 0.3 }}
+          >
+            {notification}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Add/Edit Form */}
-      <div className="bg-white shadow rounded p-6 mb-8">
+      <motion.div
+        className="bg-white shadow-lg rounded-lg p-6 mb-8"
+        whileHover={{ rotateX: 1, rotateY: 1 }}
+        transition={{ type: 'spring', stiffness: 200 }}
+      >
         <h3 className="text-xl font-semibold mb-4">
           {editingExpense ? 'Edit Expense' : 'Add Expense'}
         </h3>
-        <form onSubmit={handleAddOrUpdate} className="flex flex-col space-y-4">
+        <form onSubmit={handleAddOrUpdate} className="flex flex-col space-y-6">
           <div className="flex flex-col md:flex-row md:space-x-4">
-            <input
-              type="number"
-              step="0.01"
-              inputMode="decimal"
-              pattern="\d+(\.\d{1,2})?"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="Amount*"
-              className="p-2 border rounded flex-1"
-            />
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="p-2 border rounded flex-1"
-            >
-              <option value="">Select Category*</option>
-              <option value="Food">Food</option>
-              <option value="Travel">Travel</option>
-              <option value="Shopping">Shopping</option>
-              <option value="Bills">Bills</option>
-              <option value="Entertainment">Entertainment</option>
-            </select>
+            <div className="flex-1">
+              <label htmlFor="amount" className="block mb-1 font-medium">Amount*</label>
+              <input
+                id="amount"
+                type="number"
+                step="0.01"
+                inputMode="decimal"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="Enter amount"
+                className="p-2 border rounded w-full focus:ring-2 focus:ring-blue-300"
+              />
+            </div>
+            <div className="flex-1">
+              <label htmlFor="category" className="block mb-1 font-medium">Category*</label>
+              <select
+                id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="p-2 border rounded w-full focus:ring-2 focus:ring-blue-300"
+              >
+                <option value="">Select Category</option>
+                <option value="Food">Food</option>
+                <option value="Travel">Travel</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Bills">Bills</option>
+                <option value="Entertainment">Entertainment</option>
+              </select>
+            </div>
           </div>
           <div className="flex flex-col md:flex-row md:space-x-4">
             <div className="flex-1">
-              <label htmlFor="expenseDate" className="block mb-1">Expense Date*</label>
+              <label htmlFor="expenseDate" className="block mb-1 font-medium">Expense Date*</label>
               <input
                 id="expenseDate"
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="p-2 border rounded w-full"
-                placeholder="Select Expense Date"
+                className="p-2 border rounded w-full focus:ring-2 focus:ring-blue-300"
               />
             </div>
-            <input
-              type="text"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Note (optional)"
-              className="p-2 border rounded flex-1"
-            />
+            <div className="flex-1">
+              <label htmlFor="note" className="block mb-1 font-medium">Note (optional)</label>
+              <input
+                id="note"
+                type="text"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Add a note"
+                className="p-2 border rounded w-full focus:ring-2 focus:ring-blue-300"
+              />
+            </div>
           </div>
-          <button
+          <motion.button
             type="submit"
-            className="bg-black text-black p-2 rounded hover:bg-gray-800 transition duration-300"
+            className="bg-black text-white p-2 rounded-lg"
+            whileHover={{ scale: 1.05, rotateX: 2 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 400 }}
           >
             {editingExpense ? 'Update Expense' : 'Add Expense'}
-          </button>
+          </motion.button>
         </form>
-      </div>
+      </motion.div>
 
       {/* Filters & Sorting */}
-      <div className="bg-white shadow rounded p-6 mb-8">
+      <motion.div
+        className="bg-white shadow-lg rounded-lg p-6 mb-8"
+        whileHover={{ rotateX: 1, rotateY: 1 }}
+        transition={{ type: 'spring', stiffness: 200 }}
+      >
         <h3 className="text-xl font-semibold mb-4">Filters & Sorting</h3>
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
-            className="p-2 border rounded"
+            className="p-2 border rounded focus:ring-2 focus:ring-blue-300"
           >
             <option value="">All Categories</option>
             <option value="Food">Food</option>
@@ -311,38 +354,36 @@ const Dashboard: React.FC = () => {
             <option value="Entertainment">Entertainment</option>
           </select>
           <div>
-            <label htmlFor="startDate" className="block mb-1">Start Date</label>
+            <label htmlFor="startDate" className="block mb-1 font-medium">Start Date</label>
             <input
               id="startDate"
               type="date"
               value={filterStartDate}
               onChange={(e) => setFilterStartDate(e.target.value)}
-              className="p-2 border rounded w-full"
-              placeholder="Select Start Date"
+              className="p-2 border rounded w-full focus:ring-2 focus:ring-blue-300"
             />
           </div>
           <div>
-            <label htmlFor="endDate" className="block mb-1">End Date</label>
+            <label htmlFor="endDate" className="block mb-1 font-medium">End Date</label>
             <input
               id="endDate"
               type="date"
               value={filterEndDate}
               onChange={(e) => setFilterEndDate(e.target.value)}
-              className="p-2 border rounded w-full"
-              placeholder="Select End Date"
+              className="p-2 border rounded w-full focus:ring-2 focus:ring-blue-300"
             />
           </div>
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="p-2 border rounded"
+            className="p-2 border rounded focus:ring-2 focus:ring-blue-300"
             placeholder="Search Note"
           />
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="p-2 border rounded"
+            className="p-2 border rounded focus:ring-2 focus:ring-blue-300"
           >
             <option value="date_desc">Latest Date</option>
             <option value="date_asc">Oldest Date</option>
@@ -350,112 +391,141 @@ const Dashboard: React.FC = () => {
             <option value="amount_asc">Lowest Amount</option>
           </select>
         </div>
-        <button
+        <motion.button
           onClick={() => {
             setFilterCategory('');
             setFilterStartDate('');
             setFilterEndDate('');
             setSearchQuery('');
           }}
-          className="mt-4 bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition duration-300"
+          className="mt-4 bg-gray-500 text-white p-2 rounded-lg"
+          whileHover={{ scale: 1.05, rotateX: 2 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: 'spring', stiffness: 400 }}
         >
           Reset Filters
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
 
       {/* Expenses List */}
-      <div className="bg-white shadow rounded p-6 mb-8">
-        <h3 className="text-xl font-semibold mb-4">
-          Expenses ({filteredExpenses.length})
-        </h3>
+      <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
+        <h3 className="text-xl font-semibold mb-4">Expenses ({filteredExpenses.length})</h3>
         {filteredExpenses.length === 0 ? (
           <p>No expenses found. Try resetting filters or adding new expenses.</p>
         ) : (
           <ul className="space-y-4">
-            {filteredExpenses.map((expense) => (
-              <li
-                key={expense.id}
-                className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 border rounded hover:shadow transition"
-              >
-                <div>
-                  <p className="font-medium">
-                    {expense.date.toLocaleDateString()} - {expense.category}
-                  </p>
-                  <p>
-                    ${expense.amount.toFixed(2)}{' '}
-                    {expense.note && `- ${expense.note}`}
-                  </p>
-                </div>
-                <div className="mt-2 md:mt-0 flex space-x-4">
-                  <button
-                    onClick={() => handleEdit(expense)}
-                    className="hover:underline"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(expense.id)}
-                    className="hover:underline"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </li>
-            ))}
+            <AnimatePresence>
+              {filteredExpenses.map((expense) => (
+                <motion.li
+                  key={expense.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  whileHover={{ scale: 1.02, rotateX: 3, rotateY: 3 }}
+                  className="p-4 border rounded-lg shadow-md bg-gray-50"
+                  transition={{ type: 'spring', stiffness: 300 }}
+                >
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <div>
+                      <p className="font-medium">
+                        {expense.date.toLocaleDateString()} - {expense.category}
+                      </p>
+                      <p>
+                        ${expense.amount.toFixed(2)}{' '}
+                        {expense.note && <span className="text-gray-600"> - {expense.note}</span>}
+                      </p>
+                    </div>
+                    <div className="mt-2 md:mt-0 flex space-x-4">
+                      <motion.button
+                        onClick={() => handleEdit(expense)}
+                        className="text-blue-500 hover:underline"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ type: 'spring', stiffness: 400 }}
+                      >
+                        Edit
+                      </motion.button>
+                      <motion.button
+                        onClick={() => handleDelete(expense.id)}
+                        className="text-red-500 hover:underline"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ type: 'spring', stiffness: 400 }}
+                      >
+                        Delete
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.li>
+              ))}
+            </AnimatePresence>
           </ul>
         )}
       </div>
 
       {/* Summary Statistics */}
-      <div className="bg-white shadow rounded p-6 mb-8">
-        <h3 className="text-xl font-semibold mb-4">
-          Summary Statistics
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="p-4 border rounded text-center">
-            <p className="text-2xl font-bold">
-              ${totalAmount.toFixed(2)}
-            </p>
+      <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
+        <h3 className="text-xl font-semibold mb-4">Summary Statistics</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <motion.div
+            className="p-4 bg-blue-100 border rounded-lg text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ scale: 1.05, rotateX: 2 }}
+            transition={{ type: 'spring', stiffness: 300 }}
+          >
+            <FaMoneyBillWave className="text-3xl mx-auto mb-2 text-blue-500" />
+            <p className="text-2xl font-bold">${totalAmount.toFixed(2)}</p>
             <p>Total Amount</p>
-          </div>
-          <div className="p-4 border rounded text-center">
+          </motion.div>
+          <motion.div
+            className="p-4 bg-green-100 border rounded-lg text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ scale: 1.05, rotateX: 2 }}
+            transition={{ type: 'spring', stiffness: 300, delay: 0.1 }}
+          >
+            <FaList className="text-3xl mx-auto mb-2 text-green-500" />
             <p className="text-2xl font-bold">{totalExpenses}</p>
             <p>Number of Expenses</p>
-          </div>
-          <div className="p-4 border rounded text-center">
-            <p className="text-2xl font-bold">
-              ${highestExpense.toFixed(2)}
-            </p>
+          </motion.div>
+          <motion.div
+            className="p-4 bg-red-100 border rounded-lg text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ scale: 1.05, rotateX: 2 }}
+            transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
+          >
+            <FaChartLine className="text-3xl mx-auto mb-2 text-red-500" />
+            <p className="text-2xl font-bold">${highestExpense.toFixed(2)}</p>
             <p>Highest Expense</p>
-          </div>
+          </motion.div>
         </div>
       </div>
 
       {/* Category Breakdown */}
-      <div className="bg-white shadow rounded p-6">
-        <h3 className="text-xl font-semibold mb-4">
-          Category Breakdown
-        </h3>
+      <motion.div
+        className="bg-white shadow-lg rounded-lg p-6"
+        whileHover={{ rotateX: 1, rotateY: 1 }}
+        transition={{ type: 'spring', stiffness: 200 }}
+      >
+        <h3 className="text-xl font-semibold mb-4">Category Breakdown</h3>
         <div className="mb-4 flex items-center space-x-2">
-          <label htmlFor="chartType" className="font-medium">
-            Chart Type:
-          </label>
-          <select
+          <label htmlFor="chartType" className="font-medium">Chart Type:</label>
+          <motion.select
             id="chartType"
             value={chartType}
             onChange={(e) => setChartType(e.target.value as any)}
-            className="p-2 border rounded"
+            className="p-2 border rounded focus:ring-2 focus:ring-blue-300"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: 'spring', stiffness: 400 }}
           >
             <option value="pie">Pie</option>
             <option value="doughnut">Doughnut</option>
             <option value="bar">Bar</option>
             <option value="line">Line</option>
-          </select>
+          </motion.select>
         </div>
-        <div className="w-full md:w-2/3 mx-auto">
-          {renderChart()}
-        </div>
-      </div>
+        <div className="w-full md:w-2/3 mx-auto">{renderChart()}</div>
+      </motion.div>
     </div>
   );
 };
