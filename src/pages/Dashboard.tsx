@@ -232,6 +232,7 @@ const Dashboard: React.FC = () => {
           <h2 className="text-3xl font-bold">Dashboard</h2>
           <motion.button
             onClick={handleLogout}
+            style={{ color: 'black' }}
             className="py-2 px-4 bg-black text-black font-semibold rounded-lg"
             whileHover={{ scale: 1.05, rotate: 1 }}
             whileTap={{ scale: 0.95 }}
