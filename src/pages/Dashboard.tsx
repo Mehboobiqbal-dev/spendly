@@ -42,7 +42,7 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { expenses, loading, error } = useExpenses();
 
-  // State declarations
+
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
   const [date, setDate] = useState('');
@@ -56,7 +56,7 @@ const Dashboard: React.FC = () => {
   const [sortBy, setSortBy] = useState<'date_desc' | 'date_asc' | 'amount_desc' | 'amount_asc'>('date_desc');
   const [chartType, setChartType] = useState<'pie' | 'doughnut' | 'bar' | 'line'>('pie');
 
-  // Filtered and sorted expenses
+ 
   const filteredExpenses = useMemo(() => {
     return expenses
       .filter((expense) => {
@@ -78,12 +78,12 @@ const Dashboard: React.FC = () => {
       });
   }, [expenses, filterCategory, filterStartDate, filterEndDate, searchQuery, sortBy]);
 
-  // Debug logging
+  
   useEffect(() => {
     console.log({ user, expenses, filteredExpenses });
   }, [user, expenses, filteredExpenses]);
 
-  // Category totals for chart
+
   const categoryTotals = useMemo(() => {
     const t: Record<string, number> = {};
     expenses.forEach((e) => {
@@ -138,12 +138,12 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Summary statistics
+
   const totalExpenses = expenses.length;
   const totalAmount = expenses.reduce((sum, e) => sum + e.amount, 0);
   const highestExpense = expenses.length > 0 ? Math.max(...expenses.map((e) => e.amount)) : 0;
 
-  // Handlers
+  
   const handleAddOrUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return setNotification('Not authenticated.');
@@ -243,7 +243,7 @@ const Dashboard: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Notification */}
+    
       <AnimatePresence>
         {notification && (
           <motion.div
@@ -258,7 +258,7 @@ const Dashboard: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Add/Edit Form */}
+      
       <motion.div
         className="bg-white shadow-lg rounded-lg p-6 mb-8"
         whileHover={{ rotateX: 1, rotateY: 1 }}
@@ -334,7 +334,6 @@ const Dashboard: React.FC = () => {
         </form>
       </motion.div>
 
-      {/* Filters & Sorting */}
       <motion.div
         className="bg-white shadow-lg rounded-lg p-6 mb-8"
         whileHover={{ rotateX: 1, rotateY: 1 }}
@@ -408,7 +407,7 @@ const Dashboard: React.FC = () => {
         </motion.button>
       </motion.div>
 
-      {/* Expenses List */}
+      
       <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
         <h3 className="text-xl font-semibold mb-4">Expenses ({filteredExpenses.length})</h3>
         {filteredExpenses.length === 0 ? (
@@ -462,7 +461,7 @@ const Dashboard: React.FC = () => {
         )}
       </div>
 
-      {/* Summary Statistics */}
+      
       <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
         <h3 className="text-xl font-semibold mb-4">Summary Statistics</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -502,7 +501,7 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Category Breakdown */}
+     
       <motion.div
         className="bg-white shadow-lg rounded-lg p-6"
         whileHover={{ rotateX: 1, rotateY: 1 }}
